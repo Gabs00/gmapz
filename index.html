@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="view" content="intial scale=1.0, user-scalable=yes" />
+    <style type="text/css">
+      html {height: 100%}
+      body {height: 100%; margin: 0; padding: 0;}
+      #map-canvas {height: 75%}
+    </style>
+    <script type="text/javascript"
+      src= "https://maps.googleapis.com/maps/api/js?key=AIzaSyBO3Y3YHS6hiAB1ZsulOpZfM-8482R26-8">
+    </script> 
+    <script type="text/javascript">
+
+      //Set default location
+        function initialize() {
+          var HR = new google.maps.LatLng(37.783557, -122.408679);
+          var mapOptions = {
+            center: HR,
+            zoom: 17
+          };
+
+      //Declare new Map
+          var map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+
+      //Place marker at starting location
+          var pin = new google.maps.Marker({
+            position: HR,
+            map: map,
+            title: "Hack Reactor HQ"
+          });
+        }
+      //Map rendering
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+<body>
+  <div id="map-canvas"/>
+  </body>
+</html>
