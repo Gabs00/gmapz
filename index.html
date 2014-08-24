@@ -14,12 +14,15 @@
 
       //Set default location
         function initialize() {
-          var HR = new google.maps.LatLng(37.783557, -122.408679);
+          var coordinates = new google.maps.LatLng(37.783557, -122.408679);
           var mapOptions = {
-            center: HR,
+            center: coordinates,
           //lower numbers are more zoomed out
             zoom: 17
           };
+
+      //Address to Lat/Long conversion API (unused)
+          var geocoder = new google.maps.Geocoder();
 
       //Declare new Map
           var map = new google.maps.Map(document.getElementById("map-canvas"),
@@ -27,7 +30,7 @@
 
       //Place marker at starting location
           var pin = new google.maps.Marker({
-            position: HR,
+            position: coordinates,
             map: map,
             title: "Hack Reactor HQ"
           });
