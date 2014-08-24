@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta name="view" content="intial scale=1.0, user-scalable=yes" />
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <style type="text/css">
       html {height: 100%}
       body {height: 80%; margin: 0; padding: 0;}
@@ -13,8 +14,10 @@
     <script type="text/javascript">
 
       //Set default location
+        var coordinates;
+        var map;
         function initialize() {
-          var coordinates = new google.maps.LatLng(37.783557, -122.408679);
+          coordinates = new google.maps.LatLng(37.783557, -122.408679);
           var mapOptions = {
             center: coordinates,
           //lower numbers are more zoomed out
@@ -25,7 +28,7 @@
           var geocoder = new google.maps.Geocoder();
 
       //Declare new Map
-          var map = new google.maps.Map(document.getElementById("map-canvas"),
+          map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
 
       //Place marker at starting location
@@ -38,9 +41,62 @@
       //Map rendering
         google.maps.event.addDomListener(window, 'load', initialize);
 
+      //trees
+      //http://data.sfgov.org/resource/337t-q2b4.json
     </script>
   </head>
 <body>
   <div id="map-canvas"/>
+  <script>
+    $(function(){
+      $.ajax({
+        type:'GET',
+        url: 'http://data.sfgov.org/resource/337t-q2b4.json',
+        success: function(data){
+          processTrees(data);
+        },
+        failure: function(err){
+          console.log(err, 'failed to download data');
+        }
+      });
+
+      function processTrees(data){
+        var max = 90;
+        var destination = [];
+        data.forEach(function(tree){
+              var origins = [coordinates];
+              var lon =  tree.longitude;
+              var lat = tree.latitude;
+              var treeLoc = new google.maps.LatLng(lat,lon);
+              destination.push(treeLoc);
+              
+              if(destination.length >= max){
+                var service = new google.maps.DistanceMatrix();
+                service.getDistanceMatrix({
+                  origins:origins,
+                  destinations:destination,
+                  unitSystem:google.maps.UnitSystem.METRIC
+                }, function(resp){
+                  resp.rows.elements.forEach(function(treeData){
+                    var tree = destination.shift();
+                    var distance = treeData.distance.text.split(' ')[0];
+                    if(parseInt(distance) <= 50){
+                      var pin = new google.maps.marker({
+                        position: tree,
+                        map:map,
+                        title: 'tree'
+                      });
+                    }
+                  });
+                });
+                destination = [];
+              }
+            
+          });
+        });
+      }
+    });
+  }
+  </script>
   </body>
 </html>
